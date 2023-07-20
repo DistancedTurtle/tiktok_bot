@@ -6,6 +6,10 @@ from mutagen.mp3 import MP3
 from pandas import *
 import os
 from speach import make_mp3
+<<<<<<< HEAD
+=======
+import shutil
+>>>>>>> d9eed4e20f5007a1809ce53e06eb24cb66e2e4ea
 
 #cleaning up the info 
 with open('info.txt') as file:
@@ -51,8 +55,16 @@ for submission in subreddit.hot(limit=4):
             writer = csv.writer(f)
             #append data
             writer.writerow(data_csv)
+<<<<<<< HEAD
           os.rmdir('__pycache__')
       else:
          #else remove audio file
          os.remove(f'{submission.id}.mp3')
          os.rmdir('__pycache__')
+=======
+          shutil.rmtree('__pycache__')
+      else:
+         #else remove audio file
+         os.remove(f'{submission.id}.mp3')
+         shutil.rmtree('__pycache__')
+>>>>>>> d9eed4e20f5007a1809ce53e06eb24cb66e2e4ea
