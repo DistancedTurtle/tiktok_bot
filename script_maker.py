@@ -3,9 +3,10 @@ from datetime import date
 import csv
 import mutagen
 from mutagen.mp3 import MP3
-import gtts
 from pandas import *
 import os
+from speach import make_mp3
+import shutil
 
 #cleaning up the info 
 with open('info.txt') as file:
@@ -33,21 +34,26 @@ script_info = []
 #for every submission in the the specified category and rankings
 for submission in subreddit.hot(limit=4):
     #making sure its a text post and not an image or video
-    if len(submission.selftext) > 40:
-      tts = gtts.gTTS(submission.selftext)
-      tts.save(f"{submission.id}.mp3")
+    if len(submission.selftext) > 40 and len(submission.selftext) < 3000:
+      print
+      make_mp3(submission.selftext, 'Brian', submission.id)
+      #create file object through mutagen
       audio = MP3(f"{submission.id}.mp3")
       audio_info = audio.info
+      #find length of audio file
       length = int(audio_info.length)
-      print('length: '+str(length))
       #use pandas to read csv
       data = read_csv("used.csv")
       column_id = data['post_id'].tolist()
       #use data to pull an entire coulumn for if statement
       if length > 60 and length < 180 and submission.id not in column_id:
-          data_csv = [submission.id,date.today(),False]
+          data_csv = [submission.id,'N/A',False]
           with open ('used.csv', 'a', newline = '') as f:
             writer = csv.writer(f)
+            #append data
             writer.writerow(data_csv)
+          shutil.rmtree('__pycache__')
       else:
+         #else remove audio file
          os.remove(f'{submission.id}.mp3')
+         shutil.rmtree('__pycache__')
