@@ -5,14 +5,15 @@ import mutagen
 from mutagen.mp3 import MP3
 from pandas import *
 import os
-from speach import make_mp3
+from tts.speach import make_mp3
 
 
 #cleaning up the info 
+
 with open('info.txt') as file:
-  secrets_list = file.readlines()
-  for (i,secret) in enumerate(secrets_list):
-    secrets_list[i] = secret.replace('\'','').rstrip('\n')
+    secrets_list = file.readlines()
+    for (i,secret) in enumerate(secrets_list):
+      secrets_list[i] = secret.replace('\'','').rstrip('\n')
 
 #info to access reddit via praw
 reddit = praw.Reddit(
@@ -35,7 +36,7 @@ script_info = []
 for submission in subreddit.hot(limit=4):
     #making sure its a text post and not an image or video
     if len(submission.selftext) > 40 and len(submission.selftext) < 3000:
-      make_mp3(submission.selftext, 'Brian', submission.id)
+      make_mp3(submission.title + submission.selftext, 'Brian', submission.id)
       #create file object through mutagen
       audio = MP3(f"{submission.id}.mp3")
       audio_info = audio.info
@@ -46,7 +47,7 @@ for submission in subreddit.hot(limit=4):
       column_id = data['post_id'].tolist()
       #use data to pull an entire coulumn for if statement
       if length > 60 and length < 180 and submission.id not in column_id:
-          data_csv = [submission.id,'N/A',False]
+          data_csv = [submission.id,'N/A',False,length]
           with open ('used.csv', 'a', newline = '') as f:
             writer = csv.writer(f)
             #append data
